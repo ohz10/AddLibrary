@@ -12,6 +12,17 @@ Create a library name `libraryName` and use UnitTest++ (found with FindUnitTest+
 
     MAKE_LIBRARY(libraryName UNITTEST_LIBS ${UnitTest++_LIBRARIES}) 
 
+Inside a larger project, you give each library their own directory. E.g. 
+
+    proj/
+         CMakeLists.txt 
+         lib1/
+         lib2/ 
+
+Say lib2 depends on lib1, lib2's CMakeLists.txt looks like this:
+
+    MAKE_LIBRARY(lib2 DEPENDENCIES lib1 UNITTEST_LIBS ${UnitTest++_LIBRARIES)
+
 ### Contributors 
 
 Austin Gilbert <ceretullis@gmail.com>
