@@ -6,6 +6,12 @@ AddLibrary is a boundle of cmake helpers for creating libraries and executables 
 
 - cmake 2.8+ 
 
+### Use 
+
+Create a library name `libraryName` and use UnitTest++ (found with FindUnitTest++.cmake module) for running unit tests. 
+
+    MAKE_LIBRARY(libraryName UNITTEST_LIBS ${UnitTest++_LIBRARIES}) 
+
 ### Contributors 
 
 Austin Gilbert <ceretullis@gmail.com>
