@@ -1,30 +1,24 @@
 function(MAKE_EXECUTABLE EXEC_NAME)
 	set(executable_name "${EXEC_NAME}")
-	set(dependencies ${ARGN})
 	message("Adding Executable '${executable_name}'")
-	
-	# there should only be private headers for executables.
-	file( GLOB implementation RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-		src/*.h 
-		src/*.hh
-		src/*.hpp 
-		src/*.c 
-		src/*.cc
-		src/*.cpp
-	)
-    source_group("src" FILES ${implementation})
+
+	cmake_parse_arguments(PARSED_ARGS "" "NAME" "LINK_DEPS;DEPENDENCIES" ${ARGN})
+	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
+	set(link_libs ${PARSED_ARGS_LINK_DEPS})
+
+    add_source(${CMAKE_CURRENT_SOURCE_DIR} implementation)
 
     # create the library target
 	add_executable(${executable_name}
 		${implementation}
 	)
 
-	if(${dependencies} OR ${platform_dependencies})
+	list(LENGTH dependencies hasDependencies)
+	if(hasDependencies GREATER 0)
 		add_dependencies(${executable_name} ${dependencies})
-		target_link_libraries(
-			"${executable_name}" 
-			${dependencies} 
-			${platform_dependencies})
 	endif()
 
+	if(${link_libs})
+		target_link_libraries("${executable_name}" ${link_libs})
+	endif()
 endfunction()
