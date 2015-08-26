@@ -49,6 +49,7 @@ function(MAKE_LIBRARY LIB_NAME)
 			 ${library_name}
 			 ${testing_lib}
 			 ${dependencies}
+			 ${platform_unit_test_lib}
 			 ${unit_test_dependencies}
 			 ${platform_dependencies}
 		)
