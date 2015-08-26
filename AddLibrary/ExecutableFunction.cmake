@@ -18,7 +18,10 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 		add_dependencies(${executable_name} ${dependencies})
 	endif()
 
-	if(${link_libs})
+	set(all_deps ${dependencies} ${platform_dependencies} ${link_libs})
+	list(LENGTH all_deps hasLinkLibs)
+	
+	if(hasLinkLibs GREATER 0)
 		target_link_libraries(
 			"${executable_name}" 
 			${dependencies} 
