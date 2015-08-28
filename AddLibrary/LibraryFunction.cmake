@@ -1,9 +1,12 @@
 function(MAKE_LIBRARY LIB_NAME)
 	set(library_name "${LIB_NAME}")
 	
-	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;UNITTEST_LIBS" ${ARGN})
+	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;UNITTEST_LIBS;GENERATED_SOURCE_FILES;GENERATED_TESTING_SOURCE_FILES;GENERATED_UT_SOURCE_FILES" ${ARGN})
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
 	set(unit_test_dependencies ${PARSED_ARGS_UNITTEST_LIBS})
+	set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
+	set(generated_testing_source_files ${PARSED_ARGS_GENERATED_TESTING_SOURCE_FILES})
+	set(generated_ut_source_files ${PARSED_ARGS_GENERATED_UT_SOURCE_FILES})
 
 	message("Adding Library '${library_name}'")
 	
@@ -11,7 +14,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		${CMAKE_CURRENT_SOURCE_DIR} 
 		source_files 
 		FILTER_DIRS "tests" "testing")
-	add_library(${library_name} STATIC ${source_files})
+	add_library(${library_name} STATIC ${source_files} ${generated_source_files})
 
 	if(${dependencies})
 		add_dependencies(${library_name} ${dependencies})
@@ -24,7 +27,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		message("Adding Library '${testing_lib}'")
 
 		add_source("${CMAKE_CURRENT_SOURCE_DIR}/testing/" testing_source)
-		add_library(${testing_lib} ${testing_source})
+		add_library(${testing_lib} ${testing_source} ${generated_testing_source_files})
 
 		add_dependencies(${testing_lib} ${library_name})
 	endif()
@@ -36,7 +39,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		message("Adding Unit Test Executable '${executable_name}'")
 
 		add_source("${CMAKE_CURRENT_SOURCE_DIR}/tests/unit_test/" ut_implementation)
-		add_executable(${executable_name} ${ut_implementation})
+		add_executable(${executable_name} ${ut_implementation} ${generated_ut_source_files})
 
 		add_dependencies(
 			${executable_name}
