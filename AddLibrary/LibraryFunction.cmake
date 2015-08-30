@@ -24,9 +24,19 @@ function(MAKE_LIBRARY LIB_NAME)
 		set_property(TARGET ${library_name} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
 	endforeach(flag)
 
-	if(${dependencies})
-		add_dependencies(${library_name} ${dependencies})
-	endif()
+	# split dependency list into "project" deps and external deps.
+	set(local_target_lib_deps "")
+	set(external_dependencies "")
+	foreach(dependency ${dependencies})
+		if(TARGET ${dependency})
+			list(APPEND local_target_lib_deps ${dependency})
+		endif()
+	endforeach()
+
+	# add local deps 
+	foreach(local_dep ${local_target_lib_deps})
+		add_dependencies(${library_name} ${local_dep})
+	endforeach()
 
 	# build a testing library that holds mocks and test dummies
 	set(testing_lib "") 
