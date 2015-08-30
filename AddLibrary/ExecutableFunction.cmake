@@ -35,4 +35,6 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 			${platform_dependencies}
 			${link_libs})
 	endif()
+
+	install(TARGET ${executable_name} DESTINATION bin)
 endfunction()
