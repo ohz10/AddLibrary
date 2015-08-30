@@ -8,7 +8,7 @@ function(setup_header_installation library_name)
 	set(install_header_files ${PARSED_ARGS_HEADERS})
 	set(install_base_project ${PARSED_ARGS_BASE_PROJECT_DIR})
 
-	remove_ignored_paths(install_header_files PATHS ${install_header_files} FILTER_DIRS "src" "tests" "unit_test")
+	remove_ignored_paths(install_header_files PATHS ${install_header_files} FILTER_DIRS "src" "tests" "unit_test" "internal")
 
 	unset(installation_groups)
 	foreach(header ${install_header_files})
