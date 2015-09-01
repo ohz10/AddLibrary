@@ -36,5 +36,5 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 			${link_libs})
 	endif()
 
-	install(TARGET ${executable_name} DESTINATION bin)
+	install(TARGETS ${executable_name} DESTINATION bin)
 endfunction()
