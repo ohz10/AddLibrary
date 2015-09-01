@@ -1,11 +1,10 @@
-function(add_source BASE_DIR IMPLEMENTATION_FILES)
+function(add_source BASE_DIR HEADER_FILES IMPLEMENTATION_FILES)
 
-	cmake_parse_arguments(PARSED_ARGS "" "" "HEADER_PATTERNS;SRC_PATTERNS;PATTERNS;FILTER_DIRS;NO_INSTALL" ${ARGN})
+	cmake_parse_arguments(PARSED_ARGS "" "" "HEADER_PATTERNS;SRC_PATTERNS;PATTERNS;FILTER_DIRS" ${ARGN})
 	set(patterns ${PARSED_ARGS_PATTERNS})
 	set(header_patterns ${PARSED_ARGS_HEADER_PATTERNS})
 	set(src_patterns ${PARSED_ARGS_SRC_PATTERNS})
 	set(filter_dirs ${PARSED_ARGS_FILTER_DIRS})
-	set(no_install ${PARSED_ARGS_NO_INSTALL})
 
 	# default patterns
 	if(NOT patterns)
@@ -29,12 +28,6 @@ function(add_source BASE_DIR IMPLEMENTATION_FILES)
 	
 	remove_ignored_paths(header_files PATHS ${header_files} FILTER_DIRS ${filter_dirs})
 	remove_ignored_paths(implementation_files PATHS ${implementation_files} FILTER_DIRS ${filter_dirs})
-
-	if(${no_install})
-		# skip installing headers.
-	else()
-		setup_header_installation(${library_name} HEADERS ${header_files})
-	endif()
 
 	# Setup Groups for Project Solutions
 	unset(header_groups)
@@ -73,13 +66,8 @@ function(add_source BASE_DIR IMPLEMENTATION_FILES)
 		source_group(${source_group} FILES ${source_group_${source_group}})
 		unset(source_group_${source_group})
 	endforeach(source_group)
-
-	# add base_dir back to the paths.
-	add_base_dir(header_files PATHS ${header_files} BASE_DIR ${BASE_DIR})
-	add_base_dir(implementation_files PATHS ${implementation_files} BASE_DIR ${BASE_DIR})
-	
-	set(all_sources ${header_files} ${implementation_files})
 	
 	# return the found implementation files to the calling scope
-	set(${IMPLEMENTATION_FILES} ${all_sources} PARENT_SCOPE)
+	set(${IMPLEMENTATION_FILES} ${implementation_files} PARENT_SCOPE)
+	set(${HEADER_FILES} ${header_files} PARENT_SCOPE)
 endfunction(add_source)

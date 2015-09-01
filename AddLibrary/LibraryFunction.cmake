@@ -1,10 +1,11 @@
 function(MAKE_LIBRARY LIB_NAME)
 	set(library_name "${LIB_NAME}")
 	
-	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;UNITTEST_LIBS;GENERATED_SOURCE_FILES;GENERATED_TESTING_SOURCE_FILES;GENERATED_UT_SOURCE_FILES;COMPILE_FLAGS;TESTING_COMPILE_FLAGS;UT_COMPILE_FLAGS" ${ARGN})
+	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;UNITTEST_LIBS;GENERATED_HEADER_FILES;GENERATED_SOURCE_FILES;GENERATED_TESTING_SOURCE_FILES;GENERATED_UT_SOURCE_FILES;COMPILE_FLAGS;TESTING_COMPILE_FLAGS;UT_COMPILE_FLAGS" ${ARGN})
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
 	set(unit_test_dependencies ${PARSED_ARGS_UNITTEST_LIBS})
 	set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
+	set(generated_header_files ${PARSED_ARGS_GENERATED_HEADER_FILES})
 	set(generated_testing_source_files ${PARSED_ARGS_GENERATED_TESTING_SOURCE_FILES})
 	set(generated_ut_source_files ${PARSED_ARGS_GENERATED_UT_SOURCE_FILES})
 	
@@ -16,9 +17,9 @@ function(MAKE_LIBRARY LIB_NAME)
 	
 	add_source(
 		${CMAKE_CURRENT_SOURCE_DIR} 
-		source_files 
+		header_files source_files 
 		FILTER_DIRS "tests" "testing")
-	add_library(${library_name} STATIC ${source_files} ${generated_source_files})
+	add_library(${library_name} STATIC ${header_files} ${source_files} ${generated_header_files} ${generated_source_files})
 
 	foreach(flag ${compiler_flags})
 		set_property(TARGET ${library_name} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
@@ -44,8 +45,8 @@ function(MAKE_LIBRARY LIB_NAME)
 		set(testing_lib "${library_name}-Testing")	
 		message("Adding Library '${testing_lib}'")
 
-		add_source("${CMAKE_CURRENT_SOURCE_DIR}/testing/" testing_source NO_INSTALL true)
-		add_library(${testing_lib} ${testing_source} ${generated_testing_source_files})
+		add_source("${CMAKE_CURRENT_SOURCE_DIR}/testing/" testing_headers testing_source)
+		add_library(${testing_lib} ${testing_headers} ${testing_source} ${generated_testing_source_files})
 
 		foreach(flag ${testing_compiler_flags})
 			set_property(TARGET ${testing_lib} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
@@ -60,8 +61,8 @@ function(MAKE_LIBRARY LIB_NAME)
 		set(executable_name "${library_name}-UT")
 		message("Adding Unit Test Executable '${executable_name}'")
 
-		add_source("${CMAKE_CURRENT_SOURCE_DIR}/tests/unit_test/" ut_implementation NO_INSTALL true)
-		add_executable(${executable_name} ${ut_implementation} ${generated_ut_source_files})
+		add_source("${CMAKE_CURRENT_SOURCE_DIR}/tests/unit_test/" ut_headers ut_implementation)
+		add_executable(${executable_name} ${ut_headers} ${ut_implementation} ${generated_ut_source_files})
 
 		foreach(flag ${ut_compiler_flags})
 			set_property(TARGET ${executable_name} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
@@ -102,5 +103,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		endforeach(evaluate_test)
 	endif()
 
+	setup_header_installation(${library_name} HEADERS ${header_files} ${generated_header_files})
 	install(TARGETS ${library_name} DESTINATION lib)
+	
 endfunction()
