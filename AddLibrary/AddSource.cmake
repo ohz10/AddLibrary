@@ -1,4 +1,8 @@
-function(add_source BASE_DIR HEADER_FILES IMPLEMENTATION_FILES)
+function(add_source BASE_DIR INSTALL_HEADER_FILES HEADER_FILES IMPLEMENTATION_FILES)
+
+    # INSTALL_HEADER_FILES with the header files with relative paths.
+    # HEADER_FILES with be header files with base directories.
+    # IMPLEMENTATION_FILES will be implementation files with base directories.
 
 	cmake_parse_arguments(PARSED_ARGS "" "" "HEADER_PATTERNS;SRC_PATTERNS;PATTERNS;FILTER_DIRS" ${ARGN})
 	set(patterns ${PARSED_ARGS_PATTERNS})
@@ -66,8 +70,15 @@ function(add_source BASE_DIR HEADER_FILES IMPLEMENTATION_FILES)
 		source_group(${source_group} FILES ${source_group_${source_group}})
 		unset(source_group_${source_group})
 	endforeach(source_group)
-	
+
+   	# add base_dir back to the paths.
+    set(fullpath_header_files ${header_files})
+	add_base_dir(header_files PATHS ${header_files} BASE_DIR ${BASE_DIR})
+	add_base_dir(implementation_files PATHS ${implementation_files} BASE_DIR ${BASE_DIR})
+
 	# return the found implementation files to the calling scope
 	set(${IMPLEMENTATION_FILES} ${implementation_files} PARENT_SCOPE)
 	set(${HEADER_FILES} ${header_files} PARENT_SCOPE)
+    set(${INSTALL_HEADER_FILES} ${fullpath_header_files} PARENT_SCOPE)
+
 endfunction(add_source)

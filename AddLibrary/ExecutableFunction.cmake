@@ -7,11 +7,11 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
 	set(compiler_flags ${PARSED_ARGS_COMPILE_FLAGS})
 
-    add_source(${CMAKE_CURRENT_SOURCE_DIR} headers implementation)
+    add_source(${CMAKE_CURRENT_SOURCE_DIR} install_headers headers implementation)
 
     # create the library target
 	add_executable(${executable_name}
-	        ${headers}
+        ${headers}
 		${implementation}
 		${generated_source_files}
 	)

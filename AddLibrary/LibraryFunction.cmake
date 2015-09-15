@@ -17,7 +17,7 @@ function(MAKE_LIBRARY LIB_NAME)
 	
 	add_source(
 		${CMAKE_CURRENT_SOURCE_DIR} 
-		header_files source_files 
+		install_headers header_files source_files
 		FILTER_DIRS "tests" "testing")
 	add_library(${library_name} STATIC ${header_files} ${source_files} ${generated_header_files} ${generated_source_files})
 
@@ -45,7 +45,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		set(testing_lib "${library_name}-Testing")	
 		message("Adding Library '${testing_lib}'")
 
-		add_source("${CMAKE_CURRENT_SOURCE_DIR}/testing/" testing_headers testing_source)
+		add_source("${CMAKE_CURRENT_SOURCE_DIR}/testing/" install_testing_headers testing_headers testing_source)
 		add_library(${testing_lib} ${testing_headers} ${testing_source} ${generated_testing_source_files})
 
 		foreach(flag ${testing_compiler_flags})
@@ -61,7 +61,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		set(executable_name "${library_name}-UT")
 		message("Adding Unit Test Executable '${executable_name}'")
 
-		add_source("${CMAKE_CURRENT_SOURCE_DIR}/tests/unit_test/" ut_headers ut_implementation)
+		add_source("${CMAKE_CURRENT_SOURCE_DIR}/tests/unit_test/" install_ut_headers ut_headers ut_implementation)
 		add_executable(${executable_name} ${ut_headers} ${ut_implementation} ${generated_ut_source_files})
 
 		foreach(flag ${ut_compiler_flags})
@@ -103,7 +103,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		endforeach(evaluate_test)
 	endif()
 
-	setup_header_installation(${library_name} HEADERS ${header_files} ${generated_header_files})
+	setup_header_installation(${library_name} HEADERS ${install_headers} ${generated_header_files})
 	install(TARGETS ${library_name} DESTINATION lib)
 	
 endfunction()
