@@ -8,10 +8,11 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 	set(link_libs ${PARSED_ARGS_LINK_DEPS})
 	set(compiler_flags ${PARSED_ARGS_COMPILE_FLAGS})
 
-    add_source(${CMAKE_CURRENT_SOURCE_DIR} implementation)
+    add_source(${CMAKE_CURRENT_SOURCE_DIR} headers implementation)
 
     # create the library target
 	add_executable(${executable_name}
+	        ${headers}
 		${implementation}
 		${generated_source_files}
 	)
