@@ -2,10 +2,9 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 	set(executable_name "${EXEC_NAME}")
 	message("Adding Executable '${executable_name}'")
 
-	cmake_parse_arguments(PARSED_ARGS "" "NAME" "LINK_DEPS;DEPENDENCIES;GENERATED_SOURCE_FILES;COMPILE_FLAGS" ${ARGN})
+	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;GENERATED_SOURCE_FILES;COMPILE_FLAGS" ${ARGN})
 	set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
-	set(link_libs ${PARSED_ARGS_LINK_DEPS})
 	set(compiler_flags ${PARSED_ARGS_COMPILE_FLAGS})
 
     add_source(${CMAKE_CURRENT_SOURCE_DIR} headers implementation)
@@ -21,12 +20,20 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 			set_property(TARGET ${executable_name} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
 	endforeach(flag)
 
-	list(LENGTH dependencies hasDependencies)
-	if(hasDependencies GREATER 0)
-		add_dependencies(${executable_name} ${dependencies})
-	endif()
+	# split dependency list into "project" deps and external deps.
+	set(local_target_lib_deps "")
+	foreach(dependency ${dependencies})
+		if(TARGET ${dependency})
+			list(APPEND local_target_lib_deps ${dependency})
+		endif()
+	endforeach()
 
-	set(all_deps ${dependencies} ${platform_dependencies} ${link_libs})
+	# add local deps 
+	foreach(local_dep ${local_target_lib_deps})
+		add_dependencies(${executable_name} ${local_dep})
+	endforeach()
+
+	set(all_deps ${dependencies} ${platform_dependencies})
 	list(LENGTH all_deps hasLinkLibs)
 	
 	if(hasLinkLibs GREATER 0)
@@ -34,7 +41,7 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 			"${executable_name}" 
 			${dependencies} 
 			${platform_dependencies}
-			${link_libs})
+        )
 	endif()
 
 	install(TARGETS ${executable_name} DESTINATION bin)
