@@ -90,7 +90,7 @@ To create an executable `executableName` use the following:
 When there are external linking dependencies: 
 
     MAKE_EXECUTABLE(executableName
-    	LINK_DEPS
+    	DEPENDENCIES
     		${PNG_LIBRARIES}
     		${Boost_LIBRARIES}
     )
