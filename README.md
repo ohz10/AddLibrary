@@ -138,8 +138,12 @@ When you have targets depending on generated sources (which you've added with th
 	)
 
     MAKE_LIBRARY(lib1
-    	GENERATED_SOURCE "myfile.h" "myfile.cpp"
+        GENERATED_HEADER_FILES "myfile.h"
+    	GENERATED_SOURCE_FILES "myfile.cpp"
     )
+
+You could also provide generated source files for the _testing_ library using `GENERATED_TESTING_SOURCE_FILES`. Unit test files can be generated and supplied using `GENERATED_UT_SOURCE_FILES`.
+
 
 ### Contributors 
 
