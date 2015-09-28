@@ -9,7 +9,7 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 
     add_source(${CMAKE_CURRENT_SOURCE_DIR} install_headers headers implementation)
 
-    # create the library target
+    	# create the library target
 	add_executable(${executable_name}
         ${headers}
 		${implementation}
