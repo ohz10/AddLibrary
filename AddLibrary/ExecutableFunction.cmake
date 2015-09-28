@@ -2,17 +2,19 @@ function(MAKE_EXECUTABLE EXEC_NAME)
 	set(executable_name "${EXEC_NAME}")
 	message("Adding Executable '${executable_name}'")
 
-	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;GENERATED_SOURCE_FILES;COMPILE_FLAGS" ${ARGN})
-	set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
+	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;GENERATED_HEADER_FILES;GENERATED_SOURCE_FILES;COMPILE_FLAGS" ${ARGN})
+    set(generated_header_files ${PARSED_ARGS_GENERATED_HEADER_FILES})
+    set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
 	set(compiler_flags ${PARSED_ARGS_COMPILE_FLAGS})
 
     add_source(${CMAKE_CURRENT_SOURCE_DIR} install_headers headers implementation)
 
-    	# create the library target
+    # create the library target
 	add_executable(${executable_name}
         ${headers}
 		${implementation}
+        ${generated_header_files}
 		${generated_source_files}
 	)
 
