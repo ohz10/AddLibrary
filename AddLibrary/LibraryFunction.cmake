@@ -1,14 +1,20 @@
 function(MAKE_LIBRARY LIB_NAME)
 	set(library_name "${LIB_NAME}")
 	
-	cmake_parse_arguments(PARSED_ARGS "" "NAME" "DEPENDENCIES;UNITTEST_LIBS;GENERATED_HEADER_FILES;GENERATED_SOURCE_FILES;GENERATED_TESTING_SOURCE_FILES;GENERATED_UT_SOURCE_FILES;COMPILE_FLAGS;TESTING_COMPILE_FLAGS;UT_COMPILE_FLAGS" ${ARGN})
+	cmake_parse_arguments(PARSED_ARGS "SHARED" "NAME" "DEPENDENCIES;UNITTEST_LIBS;GENERATED_HEADER_FILES;GENERATED_SOURCE_FILES;GENERATED_TESTING_SOURCE_FILES;GENERATED_UT_SOURCE_FILES;COMPILE_FLAGS;TESTING_COMPILE_FLAGS;UT_COMPILE_FLAGS" ${ARGN})
 	set(dependencies ${PARSED_ARGS_DEPENDENCIES})
 	set(unit_test_dependencies ${PARSED_ARGS_UNITTEST_LIBS})
 	set(generated_source_files ${PARSED_ARGS_GENERATED_SOURCE_FILES})
 	set(generated_header_files ${PARSED_ARGS_GENERATED_HEADER_FILES})
 	set(generated_testing_source_files ${PARSED_ARGS_GENERATED_TESTING_SOURCE_FILES})
 	set(generated_ut_source_files ${PARSED_ARGS_GENERATED_UT_SOURCE_FILES})
-	
+
+	if(${PARSED_ARGS_SHARED})
+		set(lib_configuration "SHARED")
+	else()
+		set(lib_configuration "STATIC")
+	endif()
+
 	set(compiler_flags ${PARSED_ARGS_COMPILE_FLAGS})
 	set(testing_compiler_flags ${PARSED_ARGS_TESTING_COMPILE_FLAGS})
 	set(ut_compiler_flags ${PARSED_ARGS_UT_COMPILE_FLAGS})
@@ -19,7 +25,7 @@ function(MAKE_LIBRARY LIB_NAME)
 		${CMAKE_CURRENT_SOURCE_DIR} 
 		install_headers header_files source_files
 		FILTER_DIRS "tests" "testing")
-	add_library(${library_name} STATIC ${header_files} ${source_files} ${generated_header_files} ${generated_source_files})
+	add_library(${library_name} ${lib_configuration} ${header_files} ${source_files} ${generated_header_files} ${generated_source_files})
 
 	foreach(flag ${compiler_flags})
 		set_property(TARGET ${library_name} APPEND_STRING PROPERTY COMPILE_FLAGS "${flag} ")
