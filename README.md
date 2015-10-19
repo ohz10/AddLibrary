@@ -63,7 +63,7 @@ Currently we match any .h .H .hpp .hh .hxx as a header. And we match .c .C .cc .
 
 ### Examples
 
-#### Create a library target
+#### Create a static library target
 
 Create a library name `libraryName` and use UnitTest++ (found with FindUnitTest++.cmake module) for running unit tests. 
 
@@ -80,6 +80,19 @@ Then we can create `libraryName` like so:
 
     MAKE_LIBRARY(libraryName)
 
+
+#### Create a shared library target 
+
+Create a library name 'libraryName' and make it a shared library. 
+
+    MAKE_LIBRARY(libraryName SHARED
+        DEPENDENCIES 
+            ${Boost_LIRARIES}
+    )
+
+NOTE: On POSIX platforms, you need to pass information to the linker about which symbols in the shared library should be exported. If you fail to do this, calling `dlsym()` on `libraryName` will return `NULL` - i.e. it will fail. Exporting symbols on the GCC toolchain can be done by passing in the `--export-dynamic` linker option.
+
+NOTE: On Windows, you need to declare exported symbols using the compiler intrinsic attribute __declspec(dllexport), failure to do so will again cause failures when trying to locate symbols in the library. 
 
 #### Create an executable target
 
