@@ -45,6 +45,18 @@ function(MAKE_LIBRARY LIB_NAME)
 		add_dependencies(${library_name} ${local_dep})
 	endforeach()
 
+	set(all_deps ${dependencies} ${platform_dependencies})
+	list(LENGTH all_deps hasLinkLibs)
+	
+	# add link dependencies if present
+	if(hasLinkLibs GREATER 0)
+		target_link_libraries(
+			"${library_name}" 
+			${dependencies} 
+			${platform_dependencies}
+        )
+	endif()
+
 	# build a testing library that holds mocks and test dummies
 	set(testing_lib "") 
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/testing/")
